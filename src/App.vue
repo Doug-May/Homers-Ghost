@@ -104,6 +104,28 @@ export default {
     font-weight: 300 !important;
   }
 
+
+#lastSave {
+    font-size: 12px;
+    margin-left: 30px;
+    margin-top: 5px;
+    margin-bottom: 0px;
+  }
+
+.ql-container.ql-snow {
+    border: none !important;
+    height: 560px;
+    padding: 15px;
+    font-family: "Quicksand", sans-serif !important;
+}
+
+.ql-toolbar.ql-snow {
+    border-top: none !important;
+    border-right: none !important;
+    border-left: none !important;
+    font-family: "Quicksand", sans-serif !important;
+}
+
   .router-anim-enter-active {
     animation: coming 550ms;
     opacity: 0;

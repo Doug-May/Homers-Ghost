@@ -1,7 +1,7 @@
 <template>
     <div>
-        <div id="editor" @keydown.ctrl.s="saveStory">
-            <vue-editor v-model="content" :editorToolbar="customToolbar" @text-change="limitWarn"></vue-editor>
+        <div id="notes" @keydown.ctrl.s="saveStory">
+            <vue-editor v-model="notes" :editorToolbar="customToolbar" @text-change="limitWarn"></vue-editor>
         </div>
         <v-slide-y-transition>
             <p id="lastSave" class="lightFont" v-if="this.$store.state.lastSave"><span class="accent--text">Last Save: </span>{{ this.$store.state.lastSave }}</p>
@@ -42,10 +42,10 @@ export default {
             this.$store.dispatch("saveStory", this.$store.state.currentStory);
         },
         limitWarn(quill) {
-            if (this.content.length > 70005) {
+            if (this.notes.length > 10005) {
                 swal({
                 title: 'Too Long',
-                text: "You're story is too long. We will only save up to the 70,000 character limit",
+                text: "You're notes are too long. We will only save up to the 10,000 character limit",
                 type: 'warning',
                 showCancelButton: false,
                 confirmButtonColor: '#e06b6b',
@@ -56,12 +56,12 @@ export default {
         }
     },
     computed: {
-        content: {
+        notes: {
             get() {
-                return this.$store.state.currentStory.story
+                return this.$store.state.currentStory.notes
             },
             set(value) {
-                this.$store.commit("UPDATE_CURRENT_STORY_CONTENT", value);
+                this.$store.commit("UPDATE_CURRENT_STORY_NOTES", value)
             }
         }
     }
@@ -69,12 +69,10 @@ export default {
 </script>
 
 <style scoped>
-#editor {
+#notes {
     background-color: #fff;
     border-radius: 20px;
     height: 650px;
     padding: 10px;
 }
 </style>
-
-

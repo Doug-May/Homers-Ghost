@@ -4,6 +4,8 @@ import firebase from '@/firebase/init.js'
 import swal from "sweetalert2"
 import router from '@/router.js'
 import moment from 'moment'
+import outline from "@/templates/outline.js"
+import storyValidate from "@/validation/storyValidate.js"
 
 Vue.use(Vuex)
 
@@ -48,12 +50,18 @@ export default new Vuex.Store({
     UPDATE_CURRENT_STORY_CONTENT(state, value) {
       state.currentStory.story = value;
     },
+    UPDATE_CURRENT_STORY_NOTES(state, value) {
+      state.currentStory.notes = value;
+    },
     SAVE_STATUS(state, bool) {
       if (bool) {
         state.lastSave = moment(Date.now()).format('lll');
       } else {
         state.lastSave = null;
       }
+    },
+    LIMIT_STORY(state, limit) {
+
     }
   },
   actions: {
@@ -94,7 +102,6 @@ export default new Vuex.Store({
         let newUser = {};
         newUser.userName = payload.userName;
         newUser.brainstorm = "";
-        newUser.notes = {};
         newUser.stories = [];
         newUser.currentStory = {};
         firebase.firestore().collection("users").doc(firebase.auth().currentUser.uid).set(newUser)
@@ -174,10 +181,10 @@ export default new Vuex.Store({
         console.log(error);
       });
     },
-    createStory({ dispatch, commit }, payload) {
+    createStory({ dispatch }, payload) {
       // initialize the story object
       let story = {};
-      story.notes = {};
+      story.notes = outline;
       story.story = '';
       story.storyTitle = payload.storyTitle;
       story.uid = firebase.auth().currentUser.uid;
@@ -203,7 +210,7 @@ export default new Vuex.Store({
         console.log(err);
       })
     },
-    setCurrentStory({ commit, dispatch }, storyID) {
+    setCurrentStory({ dispatch }, storyID) {
       //Fetch the story
       firebase.firestore().collection("stories").doc(storyID).get()
       .then(doc => {
@@ -227,28 +234,131 @@ export default new Vuex.Store({
         })
       })
     },
-    saveStory({ dispatch }, currentStory) {
-      firebase.firestore().collection("stories").doc(currentStory.id).update({
-        story: currentStory.story
-      })
-      .then(() => {
-        dispatch("setCurrentStory", currentStory.id);
+    saveStory({ dispatch, commit }, currentStory) {
+      // set up variables for alert
+      let errors = storyValidate(currentStory);
+      let text = "";
+      let showAlert = false;
+      if(errors.story && errors.notes) {
+        currentStory.story = currentStory.story.slice(0,70000);
+        currentStory.notes = currentStory.notes.slice(0,10000);
+        showAlert = true;
+        text = "Both your story and your notes are too long. We'll save as much as we can but you'll need to shorten both."
+      } else if (errors.story) {
+        currentStory.story = currentStory.story.slice(0,70000);
+        showAlert = true;
+        text = "Your story is too long. We'll save as much as we can but you'll need to shorten it."
+      } else if (errors.notes) {
+        currentStory.notes = currentStory.notes.slice(0,10000);
+        showAlert = true;
+        text = "Your notes are too long. We'll save as much as we can but you'll need to shorten them."
+      }
+      //if needed, show alert 
+      if (showAlert) {
         swal({
-          toast: true,
-          position: "bottom-end",
-          showConfirmButton: false,
-          timer: 3000,
-          type: "success",
-          title: "Story Saved",
+          title: "Too Long",
+          type: "error",
+          confirmButtonColor: '#e06b6b',
+          text: text,
+          confirmButtonText: 'OK',
           customClass: "alert"
-        });
-      })
+          }).then((result) => {
+          if (result.value) {
+            firebase.firestore().collection("stories").doc(currentStory.id).update({
+              story: currentStory.story,
+              notes: currentStory.notes
+            })
+            .then(() => {
+              commit("SAVE_STATUS", true);
+              dispatch("setCurrentStory", currentStory.id);
+              swal({
+                toast: true,
+                position: "bottom-end",
+                showConfirmButton: false,
+                timer: 3000,
+                type: "warning",
+                title: "Saved (Up to the Limit)",
+                customClass: "alert"
+              });
+            })
+          }
+          });
+      } else {
+        firebase.firestore().collection("stories").doc(currentStory.id).update({
+          story: currentStory.story,
+          notes: currentStory.notes
+        })
+        .then(() => {
+          commit("SAVE_STATUS", true);
+          dispatch("setCurrentStory", currentStory.id);
+          swal({
+            toast: true,
+            position: "bottom-end",
+            showConfirmButton: false,
+            timer: 3000,
+            type: "success",
+            title: "Saved",
+            customClass: "alert"
+          });
+        })
+      }
+
+
+
+
+      
     },
     //Save the story without dispatching setCurrentStory (for saving on component destroy, switching stories, etc..)
     autoSaveStory({ dispatch }, currentStory) {
-      firebase.firestore().collection("stories").doc(currentStory.id).update({
-        story: currentStory.story
-      })
+      // set up variables for alert
+      let errors = storyValidate(currentStory);
+      let text = "";
+      let showAlert = false;
+      if(errors.story && errors.notes) {
+        currentStory.story = currentStory.story.slice(0,70000);
+        currentStory.notes = currentStory.notes.slice(0,10000);
+        showAlert = true;
+        text = "Both your story and your notes are too long. We'll save as much as we can but you'll need to shorten both."
+      } else if (errors.story) {
+        currentStory.story = currentStory.story.slice(0,70000);
+        showAlert = true;
+        text = "Your story is too long. We'll save as much as we can but you'll need to shorten it."
+      } else if (errors.notes) {
+        currentStory.story = currentStory.notes.slice(0,10000);
+        showAlert = true;
+        text = "Your notes are too long. We'll save as much as we can but you'll need to shorten them."
+      }
+      //if needed, show alert 
+      if (showAlert) {
+        swal({
+          title: "Too Long",
+          confirmButtonColor: '#e06b6b',
+          type: "error",
+          text: text,
+          confirmButtonText: 'OK',
+          customClass: "alert"
+          }).then((result) => {
+          if (result.value) {
+            firebase.firestore().collection("stories").doc(currentStory.id).update({
+              story: currentStory.story,
+              notes: currentStory.notes
+            })
+          }
+          });
+      } else {
+        firebase.firestore().collection("stories").doc(currentStory.id).update({
+          story: currentStory.story,
+          notes: currentStory.notes
+        })
+      }
+
+
+
+
+
+
+
+      
     }
   }
 })

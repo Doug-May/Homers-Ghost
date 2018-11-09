@@ -1,0 +1,1 @@
+module.exports = "<h1 class=\"ql-align-center\">Outline</h1><h2>Problem or Goal</h2><ul><li><br></li><li><br></li></ul><h2>Rising Action</h2><ul><li><br></li><li><br></li></ul><h2>Climax</h2><ul><li><br></li><li><br></li></ul><h2>Ending</h2><ul><li><br></li><li></li></ul><p><br></p><p><br></p><h1 class=\"ql-align-center\">Notes</h1><p><br></p>"

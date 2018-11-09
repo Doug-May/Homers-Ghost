@@ -6,7 +6,6 @@ import Register from './views/Register.vue'
 import ResetPassword from './views/ResetPassword.vue'
 import About from './views/About.vue'
 import Write from './views/Write.vue'
-import Brainstorm from './views/Brainstorm.vue'
 import Profile from './views/Profile.vue'
 import CreateStory from './views/CreateStory.vue'
 import store from '@/store.js'
@@ -55,11 +54,6 @@ const router = new Router({
           next();
         }
       }
-    },
-    {
-      path: '/brainstorm',
-      name: 'brainstorm',
-      component: Brainstorm
     },
     {
       path: '/profile',

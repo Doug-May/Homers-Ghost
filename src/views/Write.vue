@@ -25,17 +25,18 @@
       <v-flex xs11>
         <v-bottom-nav id="nav" :active.sync="selectedComponent" :value="true" color="secondary">
           <v-btn color="accent" flat value="editor">
-            <span>Editor</span>
+            <span>Story</span>
             <v-icon>format_align_left</v-icon>
+          </v-btn>
+          <v-btn color="accent" flat value="notes">
+            <span>Notes</span>
+            <v-icon>dashboard</v-icon>
           </v-btn>
           <v-btn color="accent" flat value="read">
             <span>Read</span>
             <v-icon>remove_red_eye</v-icon>
           </v-btn>
-          <v-btn color="accent" flat value="resources">
-            <span>Resources</span>
-            <v-icon>dashboard</v-icon>
-          </v-btn>
+          
         </v-bottom-nav>
       </v-flex>
       <v-flex xs1>
@@ -56,7 +57,7 @@
 <script>
 import editor from "@/components/user/Editor.vue"
 import read from "@/components/user/Read.vue"
-import resources from "@/components/user/Resources.vue"
+import notes from "@/components/user/Notes.vue"
 import firebase from "@/firebase/init.js"
 import moment from "moment"
 export default {
@@ -68,7 +69,7 @@ export default {
   components: {
     editor,
     read,
-    resources
+    notes
   },
   methods: {
     changeStory(id) {

@@ -54,7 +54,6 @@ export default {
         items: [
           { title: 'HOME', icon: 'home', path: '/' },
           { title: 'WRITE', icon: 'edit', path: '/write' },
-          { title: 'BRAINSTORM', icon: 'flash_on', path: '/brainstorm' },
           { title: 'PROFILE', icon: 'perm_identity', path: '/profile' },
           { title: 'ABOUT', icon: 'info', path: '/about' }
         ],
