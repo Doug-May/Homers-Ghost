@@ -6,7 +6,6 @@
             </v-toolbar-title>
             <v-spacer></v-spacer>
             <v-toolbar-items>
-                    <v-btn v-if="!this.$store.state.uid" class="headerLink" flat @click="$router.push('/about')">About</v-btn>
                     <v-btn v-if="!this.$store.state.uid" class="headerLink" flat @click="$router.push('/login')">Login</v-btn>
                 <v-icon size="30" v-else color="secondary" @click.stop="drawer = !drawer">menu</v-icon>
             </v-toolbar-items>
@@ -54,8 +53,7 @@ export default {
         items: [
           { title: 'HOME', icon: 'home', path: '/' },
           { title: 'WRITE', icon: 'edit', path: '/write' },
-          { title: 'PROFILE', icon: 'perm_identity', path: '/profile' },
-          { title: 'ABOUT', icon: 'info', path: '/about' }
+          { title: 'PROFILE', icon: 'perm_identity', path: '/profile' }
         ],
         mini: false,
         right: null
@@ -80,10 +78,13 @@ export default {
     }
     #homer {
         font-weight: 600;
+        font-family: "Greek"
     }
     #ghost {
         font-weight: 400;
-        /* font-style: italic; */
+        font-size: 15px;
+        font-family: "Greek";
+        opacity: 0.6;
     }
     .headerLink {
         font-weight: 300;

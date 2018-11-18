@@ -3,8 +3,8 @@
         <v-switch label="Dark Mode" v-model="darkMode" dark></v-switch>
         <p class="lightFont">Word Count: {{ wordCount() }}</p>
         <div v-show="wordCount() > 100">
-            <v-icon color="secondary" class="readingInfo">remove_red_eye</v-icon><p class="lightFont readingInfo"> {{ readTime() }} minutes</p>
-            <v-icon color="secondary" class="infoIcon readingInfo">record_voice_over</v-icon><p class="lightFont readingInfo">  {{ readAloudTime() }} minutes</p>
+            <v-icon color="info" class="readingInfo">remove_red_eye</v-icon><p class="lightFont readingInfo"> {{ readTime() }} min</p>
+            <v-icon color="info" class="infoIcon readingInfo">record_voice_over</v-icon><p class="lightFont readingInfo">  {{ readAloudTime() }} min</p>
         </div>
         
         <div id="content" v-html="content" :class="{lightMode: !darkMode}" v-show="wordCount() > 0"></div>
@@ -16,9 +16,7 @@ const parser = new DOMParser();
 export default {
     data() {
         return{
-            
             darkMode: true
-          
         }
     },
     methods: {
@@ -42,15 +40,15 @@ export default {
             }
         },
         readTime() {
-            return Math.round((this.wordCount()/240)*2)/2;
+            return Math.round((this.wordCount()/this.$store.state.wpm)*2)/2;
         },
         readAloudTime() {
-            return Math.round((this.wordCount()/125)*2)/2;
+            return Math.round((this.wordCount()/this.$store.state.wpmv)*2)/2;
         }
     },
     computed: {
         content() {
-            return this.$store.state.currentStory.story
+            return this.$store.state.currentStory.story.replace(/<p><br><\/p>/g, "");
         }
     }
 }
@@ -67,7 +65,7 @@ export default {
     #content {
         margin-top: 10px;
         transition: 400ms;
-        padding: 20px 20px;
+        padding: 20px 40px;
         border-radius: 20px;
         color: #d0d0d0;
     }

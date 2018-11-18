@@ -1,5 +1,5 @@
 <template>
-<div>
+<v-container>
     <div id="login" class="myCard">
         <div @keyup.prevent.enter="login" ref="form" lazy-validation class="userBox">
             <!-- <v-icon class="backButton" @click="$router.go(-1)">keyboard_backspace</v-icon> -->
@@ -19,8 +19,8 @@
             <p class="text-xs-center" @click="$router.push('/resetpassword')"><span class="redirect" @click="$router.push('/resetpassword')">Forgot your password?</span></p>
         </div>
     </div>
-<p class="lightFont text-xs-center">Create an account <span class="redirect" @click="$router.push('/register')">here</span></p>
-</div>
+<p class="lightFont text-xs-center">New? Create an account <span class="redirect" @click="$router.push('/register')">here</span></p>
+</v-container>
 
 </template>
 

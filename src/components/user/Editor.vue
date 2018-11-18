@@ -1,7 +1,7 @@
 <template>
     <div>
         <div id="editor" @keydown.ctrl.s="saveStory">
-            <vue-editor v-model="content" :editorToolbar="customToolbar" @text-change="limitWarn"></vue-editor>
+            <vue-editor id="vueEditor"  v-model="content" :editorToolbar="customToolbar" @text-change="limitWarn"></vue-editor>
         </div>
         <v-slide-y-transition>
             <p id="lastSave" class="lightFont" v-if="this.$store.state.lastSave"><span class="accent--text">Last Save: </span>{{ this.$store.state.lastSave }}</p>
@@ -34,7 +34,8 @@ export default {
                     'list': 'bullet'
                 }],
                 [{ 'color': [] }, { 'background': [] }]
-            ]
+            ],
+            scrollAmount: null
         }
     },
     methods: {
@@ -45,7 +46,7 @@ export default {
             if (this.content.length > 70005) {
                 swal({
                 title: 'Too Long',
-                text: "You're story is too long. We will only save up to the 70,000 character limit",
+                text: "You're story is too long. We will only save up to the limit",
                 type: 'warning',
                 showCancelButton: false,
                 confirmButtonColor: '#e06b6b',
@@ -64,6 +65,14 @@ export default {
                 this.$store.commit("UPDATE_CURRENT_STORY_CONTENT", value);
             }
         }
+    },
+    activated() {
+        if (this.scrollAmount) {
+            document.getElementById("vueEditor").firstElementChild.scrollBy(0, this.scrollAmount);
+        }
+    },
+    deactivated() {
+        this.scrollAmount = document.getElementById("vueEditor").firstElementChild.scrollTop;
     }
 }
 </script>

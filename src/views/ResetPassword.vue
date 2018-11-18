@@ -1,21 +1,20 @@
 <template>
-<div>
-    <div id="sendEmail" class="myCard">
-        <div @keyup.prevent.enter="sendEmail" ref="form" lazy-validation class="userBox">
-            <!-- <v-icon class="backButton" @click="$router.go(-1)">keyboard_backspace</v-icon> -->
-            <h1 class="darkText text-xs-center">Reset Password</h1>
-            <p>Enter the email associated with your account and we'll send you a link to reset your password.</p>
-            <v-text-field v-if="$store.state.errors.email" v-model="email" label="E-mail" color="#a04b4b" required :rules="[() => $store.state.errors.email]"
-                error></v-text-field>
-            <v-text-field v-else v-model="email" color="secondary" label="E-mail" required></v-text-field>
-            <v-btn block round id="submitButton" color="secondary" @click="sendEmail">
-                Send Email
-            </v-btn>
+    <v-container>
+        <div id="sendEmail" class="myCard">
+            <div @keyup.prevent.enter="sendEmail" ref="form" lazy-validation class="userBox">
+                <!-- <v-icon class="backButton" @click="$router.go(-1)">keyboard_backspace</v-icon> -->
+                <h1 class="darkText text-xs-center">Reset Password</h1>
+                <p>Enter the email associated with your account and we'll send you a link to reset your password.</p>
+                <v-text-field v-if="$store.state.errors.email" v-model="email" label="E-mail" color="#a04b4b" required
+                    :rules="[() => $store.state.errors.email]" error></v-text-field>
+                <v-text-field v-else v-model="email" color="secondary" label="E-mail" required></v-text-field>
+                <v-btn block round id="submitButton" color="secondary" @click="sendEmail">
+                    Send Email
+                </v-btn>
+            </div>
         </div>
-    </div>
-<p class="lightFont text-xs-center">Back to <span class="redirect" @click="$router.push('/login')">login</span></p>
-</div>
-
+        <p class="lightFont text-xs-center">Back to <span class="redirect" @click="$router.push('/login')">login</span></p>
+    </v-container>
 </template>
 
 <script>

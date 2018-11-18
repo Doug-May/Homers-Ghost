@@ -1,7 +1,6 @@
 <template>
-    <div>
-        <h2 class="text-xs-center lightFont" v-if="this.$store.state.stories.length == 0">You Don't Have Any Stories Yet!</h2>
-    <div id="login" class="myCard">
+<v-container>
+    <div class="myCard">
         <div @keyup.prevent.enter="createStory" ref="form" lazy-validation class="userBox">
             <v-icon class="backButton" @click="$router.go(-1)">keyboard_backspace</v-icon>
             <h2 class="darkText text-xs-center">Create Story</h2>
@@ -13,7 +12,7 @@
             </v-btn>
         </div>
     </div>
-</div>
+</v-container>
 </template>
 
 <script>

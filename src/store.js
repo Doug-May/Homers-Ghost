@@ -15,9 +15,10 @@ export default new Vuex.Store({
     uid: null,
     userName: null,
     email: null,
+    wpm: null,
+    wpmv: null,
     stories: [],
     currentStory: {},
-    brainstorm: null,
     lastSave: null
   },
   mutations: {
@@ -26,8 +27,9 @@ export default new Vuex.Store({
       state.email = user.email;
       state.userName = user.userName;
       state.stories = user.stories;
-      state.brainstorm = user.brainstorm;
       state.currentStory = user.currentStory;
+      state.wpm = user.wpm;
+      state.wpmv = user.wpmv;
     },
     CLEAR_ERRORS(state) {
       state.errors = {};
@@ -40,7 +42,6 @@ export default new Vuex.Store({
       state.uid = null;
       state.userName = null;
       state.stories = [];
-      state.brainstorm = null;
       state.email = null;
       router.push("/login");
     },
@@ -59,16 +60,13 @@ export default new Vuex.Store({
       } else {
         state.lastSave = null;
       }
-    },
-    LIMIT_STORY(state, limit) {
-
     }
   },
   actions: {
     login({ dispatch, commit }, payload) {
       firebase.auth().signInWithEmailAndPassword(payload.email, payload.password)
       .then(() => {
-        dispatch("refreshUser");
+        dispatch("refreshUser")
         swal({
           toast: true,
           position: "bottom-end",
@@ -78,7 +76,9 @@ export default new Vuex.Store({
           title: "Logged In",
           customClass: "alert"
         });
-        router.push("/");
+        setTimeout(() => {
+          router.push("/profile")
+        },400)
       })
       .catch(error => {
         let payload = {};
@@ -101,9 +101,10 @@ export default new Vuex.Store({
         //add the user to the users collection       
         let newUser = {};
         newUser.userName = payload.userName;
-        newUser.brainstorm = "";
         newUser.stories = [];
         newUser.currentStory = {};
+        newUser.wpm = 300;
+        newUser.wpmv = 140;
         firebase.firestore().collection("users").doc(firebase.auth().currentUser.uid).set(newUser)
         .then(() => {
           dispatch("refreshUser");
@@ -143,25 +144,47 @@ export default new Vuex.Store({
           // Initialize the payload object
           let payload = {};
           payload.stories = [];
-          payload.brainstorm = '';
           payload.uid = user.uid;
           payload.email = user.email;
           payload.userName = '';
           payload.currentStory = {};
+          payload.wpm = null;
+          payload.wpmv = null;
 
-          // Call for getting userName, stories, brainstorm, currentStory
+          // Call for getting userName, stories, brainstorm, currentStory, reading speed
           firebase.firestore().collection("users").doc(user.uid).get()
           .then(doc => {
             payload.userName = doc.data().userName;
-            payload.brainstorm = doc.data().brainstorm;
             payload.stories = doc.data().stories;
             payload.currentStory = doc.data().currentStory;
+            payload.wpm = doc.data().wpm;
+            payload.wpmv = doc.data().wpmv;
             commit("REFRESH_USER", payload);
           })
           .catch(err => {
               console.log(err);
           })  
         }                      
+    },
+    editUser({ dispatch }, payload) {
+      firebase.firestore().collection("users").doc(firebase.auth().currentUser.uid).update({
+        userName: payload.userName,
+        wpm: payload.wpm,
+        wpmv: payload.wpmv
+      })
+      .then(() => {
+        dispatch("refreshUser");
+        router.push('/profile');
+        swal({
+          toast: true,
+          position: "bottom-end",
+          showConfirmButton: false,
+          timer: 3000,
+          type: "success",
+          title: "Profile Saved",
+          customClass: "alert"
+        });
+      })
     },
     logout({ commit }) {
       firebase.auth().signOut()
@@ -202,7 +225,7 @@ export default new Vuex.Store({
           .then(() => {
             dispatch("refreshUser");
             dispatch("setCurrentStory", docRef.id);
-            router.push("/write");
+            setTimeout(() => {router.push("/write")},500);
           })
         })
       })
@@ -226,7 +249,6 @@ export default new Vuex.Store({
         })
         .then(() => {
           //refresh the user to get all the changes
-         
           dispatch("refreshUser");
         })
         .catch(err => {
@@ -358,6 +380,71 @@ export default new Vuex.Store({
 
 
 
+      
+    },
+    deleteStory({ dispatch }, payload) {
+      //Confirm with the user that they really want to delete
+      swal({
+        titleText: 'Delete Story?',
+        html: "<p>You won't be able to undo this!<br><br>Please type in the name of the story to confirm</p>",
+        type: 'warning',
+        input: 'text',
+        showCancelButton: true,
+        confirmButtonColor: '#445777',
+        cancelButtonColor: '#e06b6b',
+        confirmButtonText: 'Yes, delete it!',
+        customClass: "alert",
+        inputValidator: (value) => {
+          return new Promise((resolve) => {
+            if (value === payload.storyTitle) {
+              resolve()
+            } else {
+              resolve('Type the name of the story in order to delete (case sensitive)')
+            }
+          })
+        }
+      }).then((result) => {
+        if (result.value) {
+          firebase.firestore().collection("stories").doc(payload.storyID).delete()
+          .then(() => {
+            firebase.firestore().collection("users").doc(firebase.auth().currentUser.uid).get()
+            .then(doc => {
+              let usersStories = doc.data().stories;
+              let updatedStories = usersStories.filter(story => {return story.id != payload.storyID});
+              firebase.firestore().collection("users").doc(firebase.auth().currentUser.uid).update({stories: updatedStories})
+              .then(() => {
+                //if currentstory is the one being deleted then we need to switch the user to a new story
+                if(payload.currentStoryID == payload.storyID && updatedStories.length > 0) {
+                  dispatch("setCurrentStory", updatedStories[0].id);
+                } else if(payload.currentStoryID == payload.storyID && updatedStories.length == 0) {
+                  firebase.firestore().collection("users").doc(firebase.auth().currentUser.uid).update({currentStory: {}})
+                  .then(() => {dispatch("refreshUser");})
+                } else {
+                  dispatch("refreshUser");
+                }
+                swal({
+                  toast: true,
+                  position: "bottom-end",
+                  showConfirmButton: false,
+                  timer: 3000,
+                  type: "success",
+                  title: "Story Deleted",
+                  customClass: "alert"
+                });
+              })
+              .catch(err => {
+                console.log(err);
+              })
+            })
+            .catch(err => {
+              console.log(err);
+            })
+          })
+          .catch(err => {
+            console.log(err);
+          })
+        }
+      })
       
     }
   }

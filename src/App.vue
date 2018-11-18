@@ -2,11 +2,11 @@
 <div id="app" class="fadeIn">
   <v-app>
     <Header/>
-    <v-container>
+    <!-- <v-container> -->
       <transition name="router-anim" mode="out-in">
         <router-view/>
       </transition>
-    </v-container>
+    <!-- </v-container> -->
   </v-app>
 </div>
   
@@ -49,15 +49,31 @@ export default {
   }
 
   .myCard {
-    background-color: #ffffff;
+    background-color: #f5f5f5;
     padding: 1px;
     border-radius: 3px;
     max-width: 500px;
     margin: 10px auto;
   }
 
-  .backButton {
-        position: absolute;
+  .flexWrap {
+    padding: 15px;
+  }
+
+  .line {
+    width: 100%;
+    border-bottom: 1px solid #d0d0d0;
+    opacity: 0.2;
+    margin-bottom: 15px;
+  }
+
+  .centered {
+    display: inline-block;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    /* bring your own prefixes */
+    transform: translate(-50%, -50%);
   }
 
   h1,
@@ -88,7 +104,7 @@ export default {
 
   .redirect {
     cursor: pointer;
-    color: #4d648d;
+    color: #8aabd8;
   }
 
   .alert {
@@ -115,8 +131,28 @@ export default {
 .ql-container.ql-snow {
     border: none !important;
     height: 560px;
+    max-width: 1200px;
+    margin: auto;
     padding: 15px;
     font-family: "Quicksand", sans-serif !important;
+}
+
+.ql-container.ql-snow h1{
+    font-size: 23px !important;
+    font-weight: 400 !important;
+}
+
+.ql-container.ql-snow h2{
+    font-size: 19px !important;
+    font-weight: 400 !important;
+}
+
+.ql-container.ql-snow p{
+    font-size: 15px !important;
+}
+
+.ql-container.ql-snow li{
+    font-size: 15px !important;
 }
 
 .ql-toolbar.ql-snow {
@@ -217,5 +253,9 @@ export default {
 *::-webkit-scrollbar-thumb {
     background: #445777;
     border-radius: 4px;
+}
+@font-face {
+    font-family: Greek;
+    src: url('./assets/fonts/capitalis_goreanis.ttf');
 }
 </style>
