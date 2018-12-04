@@ -49,7 +49,7 @@ export default {
   }
 
   .myCard {
-    background-color: #f5f5f5;
+    background-color: #fff;
     padding: 1px;
     border-radius: 3px;
     max-width: 500px;
@@ -63,6 +63,13 @@ export default {
   .line {
     width: 100%;
     border-bottom: 1px solid #d0d0d0;
+    opacity: 0.2;
+    margin-bottom: 15px;
+  }
+
+   .darkLine {
+    width: 100%;
+    border-bottom: 1px solid #445777;
     opacity: 0.2;
     margin-bottom: 15px;
   }
