@@ -140,7 +140,7 @@ export default {
     height: 560px;
     max-width: 1200px;
     margin: auto;
-    padding: 15px;
+    padding: 40px 25px;
     font-family: "Quicksand", sans-serif !important;
 }
 
