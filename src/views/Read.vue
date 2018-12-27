@@ -10,8 +10,10 @@
                 <v-icon color="info" class="infoIcon readingInfo">record_voice_over</v-icon>
                 <p class="lightFont readingInfo"> {{ readAloudTime }} min</p>
             </div>
-            <h1 class="lightFont text-xs-center mt-5">{{ storyTitle }}</h1>
-            <div id="content" v-html="content" :class="{lightMode: !darkMode}" v-show="wordCount > 0"></div>
+            <div v-show="!loading" id="storyText">
+                <h1 class="lightFont text-xs-center mt-5">{{ storyTitle }}</h1>
+                <div id="content" v-html="content" :class="{lightMode: !darkMode}" v-show="wordCount > 0"></div>
+            </div>
         </div>
     </v-container>
 </template>
@@ -20,13 +22,14 @@
 import firebase from "@/firebase/init.js"
 export default {
     data() {
-        return{
+        return {
             darkMode: true,
             content: null,
             storyTitle: null,
             wordCount: null,
             readTime: null,
-            readAloudTime: null
+            readAloudTime: null,
+            loading: true
         }
     },
     created() {
@@ -55,19 +58,22 @@ export default {
             }
             this.readTime = Math.round((this.wordCount/this.$store.state.wpm)*2)/2;
             this.readAloudTime = Math.round((this.wordCount/this.$store.state.wpmv)*2)/2;
+
+            this.loading = false;
         })
     }
 }
 </script>
 
 <style scoped>
-    .readingInfo{
+    .readingInfo {
         display: inline;
     }
 
     .infoIcon {
         margin-left: 20px;
     }
+
     #content {
         margin-top: 10px;
         transition: 400ms;
@@ -75,13 +81,15 @@ export default {
         border-radius: 20px;
         color: #d0d0d0;
     }
-    
-    #content >>> h1,h2,p {
+
+    #content>>>h1,
+    h2,
+    p {
         margin: 2px;
         color: #d0d0d0;
     }
 
-     #content >>> br {
+    #content>>>br {
         margin: 100px;
     }
 
@@ -101,5 +109,21 @@ export default {
 
     #content>>>.ql-align-right {
         text-align: right;
+    }
+
+    #storyText {
+        animation: loadIn 700ms ease-in-out;
+    }
+
+    @keyframes loadIn {
+        0% {
+            opacity: 0;
+            transform: translateY(4px);
+        }
+
+        100% {
+            opacity: 1;
+            transform: translateY(0px);
+        }
     }
 </style>
